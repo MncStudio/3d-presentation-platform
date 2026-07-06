@@ -17,6 +17,10 @@
     "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
+    "@gltf-transform/core": "^4.4.1",
+    "@gltf-transform/extensions": "^4.4.1",
+    "@gltf-transform/functions": "^4.4.1",
+    "meshoptimizer": "^1.2.0",
     "three": "^0.170.0",
     "vue": "^3.5.13"
   },
