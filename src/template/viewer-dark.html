@@ -1,0 +1,26 @@
+<!--
+  模板A：深色主题 (dark)
+  适用场景：通用 / 默认
+  配色：深灰背景 #1a1a2e，红色强调 #e94560
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Viewer</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#1a1a2e;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+/* 底部信息条 */
+#info{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.35);font-size:11px;pointer-events:none}
+/* 顶部品牌条 */
+#brand{position:absolute;top:16px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.25);font-size:12px;letter-spacing:1px;pointer-events:none}
+</style>
+</head>
+<body>
+<!-- INJECT: three.js importmap + scene setup + GLB data -->
+<div id="info">拖拽旋转 | 滚轮缩放 | 右键平移</div>
+<div id="brand">3D Presenter</div>
+</body>
+</html>

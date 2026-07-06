@@ -1,0 +1,29 @@
+<!--
+  模板D：工业 (industrial)
+  适用场景：工厂 / 设备 / 机械
+  配色：深灰 #1e1e1e，橙色强调 #ff6d00
+  特点：四角框线，工业风格装饰
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Viewer</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#1e1e1e;overflow:hidden;font-family:'Courier New',Courier,monospace}
+/* 四角装饰 */
+body::before,body::after{content:'';position:absolute;width:40px;height:40px;border-color:rgba(255,109,0,0.4);border-style:solid;pointer-events:none}
+body::before{top:20px;left:20px;border-width:2px 0 0 2px}
+body::after{bottom:20px;right:20px;border-width:0 2px 2px 0}
+#info{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.3);font-size:10px;text-transform:uppercase;letter-spacing:2px;pointer-events:none}
+#hud{position:absolute;top:20px;right:24px;color:rgba(255,109,0,0.7);font-size:10px;text-transform:uppercase;letter-spacing:1px;pointer-events:none}
+</style>
+</head>
+<body>
+<!-- INJECT: three.js importmap + scene setup + GLB data -->
+<div id="info">拖拽旋转 | 滚轮缩放 | 右键平移</div>
+<div id="hud">INDUSTRIAL VIEWER</div>
+</body>
+</html>

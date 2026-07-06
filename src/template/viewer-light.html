@@ -1,0 +1,24 @@
+<!--
+  模板B：白色主题 (light)
+  适用场景：建筑 / 室内设计
+  配色：白色背景 #f5f5f5，蓝色强调 #2196F3
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Viewer</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f5f5f5;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+#info{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:rgba(0,0,0,0.35);font-size:11px;pointer-events:none}
+#brand{position:absolute;top:16px;left:50%;transform:translateX(-50%);color:rgba(0,0,0,0.25);font-size:12px;letter-spacing:1px;pointer-events:none}
+</style>
+</head>
+<body>
+<!-- INJECT: three.js importmap + scene setup + GLB data -->
+<div id="info">拖拽旋转 | 滚轮缩放 | 右键平移</div>
+<div id="brand">3D Presenter</div>
+</body>
+</html>

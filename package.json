@@ -1,0 +1,33 @@
+{
+  "name": "3d-presenter",
+  "version": "0.1.0",
+  "description": "3D 演示生成器 - 一键将 GLB 模型导出为可交付的单文件 HTML",
+  "main": "./out/main/index.js",
+  "author": "Mnc",
+  "license": "MIT",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "package": "electron-vite build && electron-builder --dir",
+    "dist": "electron-vite build && electron-builder",
+    "dist:mac": "electron-vite build && electron-builder --mac",
+    "dist:win": "electron-vite build && electron-builder --win",
+    "dist:linux": "electron-vite build && electron-builder --linux",
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "three": "^0.170.0",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@types/three": "^0.170.0",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "electron": "^33.3.1",
+    "electron-builder": "^25.1.8",
+    "electron-vite": "^2.3.0",
+    "typescript": "^5.7.2",
+    "vite": "^5.4.11",
+    "vue-tsc": "^2.2.0"
+  }
+}

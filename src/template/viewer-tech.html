@@ -1,0 +1,29 @@
+<!--
+  模板E：科技蓝 (tech)
+  适用场景：数字孪生 / 数据可视化
+  配色：深蓝 #0a0e27，科技蓝强调 #00d4ff
+  特点：数据面板装饰，科技感线条
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Viewer</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0e27;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+/* 网格线背景（CSS实现） */
+body::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(0,212,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none}
+#info{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:rgba(0,212,255,0.35);font-size:11px;pointer-events:none}
+#brand{position:absolute;top:16px;left:50%;transform:translateX(-50%);color:rgba(0,212,255,0.3);font-size:12px;letter-spacing:2px;pointer-events:none}
+/* 数据面板 */
+#data-panel{position:absolute;top:50%;left:24px;transform:translateY(-50%);color:rgba(0,212,255,0.5);font-size:10px;line-height:1.8;pointer-events:none;border-left:1px solid rgba(0,212,255,0.2);padding-left:12px}
+</style>
+</head>
+<body>
+<!-- INJECT: three.js importmap + scene setup + GLB data -->
+<div id="info">拖拽旋转 | 滚轮缩放 | 右键平移</div>
+<div id="brand">3D Presenter</div>
+</body>
+</html>
