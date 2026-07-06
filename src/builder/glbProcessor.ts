@@ -106,7 +106,7 @@ async function getIO(): Promise<WebIO> {
  */
 export async function analyzeGlb(data: ArrayBuffer): Promise<GlbStats> {
   const io = await getIO()
-  const doc = await io.readBinary(data)
+  const doc = await io.readBinary(new Uint8Array(data))
 
   const root = doc.getRoot()
   const meshes = root.listMeshes()
@@ -160,7 +160,7 @@ export async function compressGlb(
   const originalStats = await analyzeGlb(data)
 
   const io = await getIO()
-  const doc = await io.readBinary(data)
+  const doc = await io.readBinary(new Uint8Array(data))
 
   // 构建处理管线
   const transforms: Promise<any>[] = []
