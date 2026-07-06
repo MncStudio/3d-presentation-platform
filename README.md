@@ -18,16 +18,22 @@
 
 ### macOS (Apple Silicon)
 
-| 版本 | 下载 |
-|------|------|
-| v0.1.0 | [3D-Presenter-macOS-arm64.zip](https://github.com/Mnc/3d-presentation-platform/releases) |
+| 版本 | 类型 | 下载 |
+|------|------|------|
+| v0.1.0 | 便携版 | [3D-Presenter-macOS-arm64.zip](https://github.com/Mnc/3d-presentation-platform/releases) |
 
-> 下载后解压，将 `3D Presenter.app` 拖入 Applications 文件夹即可。
-> 首次打开若提示"无法验证开发者"，前往 **系统设置 → 隐私与安全性 → 仍要打开**。
+> 下载后解压，将 `3D Presenter.app` 拖入 Applications 文件夹即可。首次打开若提示"无法验证开发者"，前往 **系统设置 → 隐私与安全性 → 仍要打开**。
 
-### Windows / Linux
+### Windows (ARM64)
 
-即将支持。也可从源码构建（见下方开发说明）。
+| 版本 | 类型 | 下载 |
+|------|------|------|
+| v0.1.0 | 安装包 | [3D Presenter Setup 0.1.0.exe](https://github.com/Mnc/3d-presentation-platform/releases) |
+| v0.1.0 | 便携版 | [3D-Presenter-win-arm64.zip](https://github.com/Mnc/3d-presentation-platform/releases) |
+
+> **安装包**：双击安装，自动创建桌面快捷方式。**便携版**：解压即用，无需安装。
+>
+> ⚠️ 当前仅构建了 ARM64 架构。x64 版本即将支持。
 
 ---
 
