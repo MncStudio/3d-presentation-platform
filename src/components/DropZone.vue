@@ -34,16 +34,16 @@ function onDrop(e: DragEvent) {
 }
 
 async function onClickSelect() {
-  // Electron 环境：使用原生文件对话框
+  // Electron 环境：使用原生文件对话框 + IPC 读取
   if (window.electronAPI) {
     const filePath = await window.electronAPI.openGlb()
     if (filePath) {
-      // 通过 fetch file:// 读取为 File 对象
-      const response = await fetch(`file://${filePath}`)
-      const blob = await response.blob()
-      const fileName = filePath.split(/[/\\]/).pop() || 'model.glb'
-      const file = new File([blob], fileName, { type: 'model/gltf-binary' })
-      emit('file-selected', file)
+      const buffer = await window.electronAPI.readFile(filePath)
+      if (buffer) {
+        const fileName = filePath.split(/[/\\]/).pop() || 'model.glb'
+        const file = new File([buffer], fileName, { type: 'model/gltf-binary' })
+        emit('file-selected', file)
+      }
     }
     return
   }

@@ -8,6 +8,10 @@ const api = {
   saveHtml: (defaultName?: string): Promise<string | null> =>
     ipcRenderer.invoke('dialog:saveHtml', defaultName),
 
+  // 读取文件内容（返回 ArrayBuffer）
+  readFile: (filePath: string): Promise<ArrayBuffer | null> =>
+    ipcRenderer.invoke('fs:readFile', filePath),
+
   // 在文件管理器中显示
   showItemInFolder: (filePath: string): Promise<void> =>
     ipcRenderer.invoke('shell:showItemInFolder', filePath),

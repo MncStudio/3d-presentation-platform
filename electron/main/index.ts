@@ -1,5 +1,6 @@
 import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron'
 import { join } from 'path'
+import { readFile } from 'fs/promises'
 
 let mainWindow: BrowserWindow | null = null
 
@@ -66,6 +67,16 @@ ipcMain.handle('dialog:saveHtml', async (_event, defaultName: string) => {
 // 在文件管理器中显示文件
 ipcMain.handle('shell:showItemInFolder', async (_event, filePath: string) => {
   shell.showItemInFolder(filePath)
+})
+
+// 读取文件（用于渲染进程获取 GLB 数据）
+ipcMain.handle('fs:readFile', async (_event, filePath: string) => {
+  try {
+    const buffer = await readFile(filePath)
+    return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength)
+  } catch {
+    return null
+  }
 })
 
 // 用默认浏览器打开文件

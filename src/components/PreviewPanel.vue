@@ -3,6 +3,7 @@ import { ref, onMounted, onUnmounted, watch } from 'vue'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js'
 
 const props = defineProps<{
   glbData: ArrayBuffer
@@ -18,6 +19,17 @@ let controls: OrbitControls | null = null
 let animationId = 0
 let mixer: THREE.AnimationMixer | null = null
 let clock: THREE.Clock | null = null
+
+// 共享 DRACOLoader（解码 Draco 压缩的 GLB）
+let dracoLoader: DRACOLoader | null = null
+
+function getDracoLoader(): DRACOLoader {
+  if (!dracoLoader) {
+    dracoLoader = new DRACOLoader()
+    dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/')
+  }
+  return dracoLoader
+}
 
 onMounted(() => {
   initScene()
@@ -143,6 +155,7 @@ function loadModel(data: ArrayBuffer) {
   if (!scene) return
 
   const loader = new GLTFLoader()
+  loader.setDRACOLoader(getDracoLoader())
   loader.parse(data, '', (gltf) => {
     const model = gltf.scene
 

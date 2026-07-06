@@ -67,6 +67,11 @@ body{background:#1a1a2e;overflow:hidden;font-family:-apple-system,BlinkMacSystem
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+
+// ====== Draco 解码器 ======
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/');
 
 // ====== 场景初始化 ======
 const renderer = new THREE.WebGLRenderer({antialias:true});
@@ -116,6 +121,7 @@ scene.add(new THREE.DirectionalLight('#ffffff', 0.8)).position.set(0, 0, 5);
 const glbBase64 = "${glbBase64}";
 const glbBinary = Uint8Array.from(atob(glbBase64), c => c.charCodeAt(0));
 const loader = new GLTFLoader();
+loader.setDRACOLoader(dracoLoader);
 let mixer = null;
 
 loader.parse(glbBinary.buffer, '', (gltf) => {
