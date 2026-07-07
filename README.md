@@ -4,6 +4,14 @@
 
 ---
 
+## 在线使用
+
+🌐 **浏览器直接打开，无需下载安装：**
+
+👉 **[mncstudio.github.io/3d-presentation-platform](https://mncstudio.github.io/3d-presentation-platform/)**
+
+---
+
 ## 这是什么
 
 3D Presenter 是一个 **3D 演示生成器**，不是格式转换工具。
