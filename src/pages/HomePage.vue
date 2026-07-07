@@ -21,7 +21,6 @@ async function handleFileSelected(file: File) {
   isCompressed.value = false
 
   try {
-    // FileReader 读取文件，兼容 Electron 和浏览器环境
     const data = await readFileAsArrayBuffer(file)
     glbData.value = data
     originalGlbData.value = data

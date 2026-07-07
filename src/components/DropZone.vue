@@ -34,21 +34,6 @@ function onDrop(e: DragEvent) {
 }
 
 async function onClickSelect() {
-  // Electron 环境：使用原生文件对话框 + IPC 读取
-  if (window.electronAPI) {
-    const filePath = await window.electronAPI.openGlb()
-    if (filePath) {
-      const buffer = await window.electronAPI.readFile(filePath)
-      if (buffer) {
-        const fileName = filePath.split(/[/\\]/).pop() || 'model.glb'
-        const file = new File([buffer], fileName, { type: 'model/gltf-binary' })
-        emit('file-selected', file)
-      }
-    }
-    return
-  }
-
-  // 浏览器环境：使用原生 file input
   fileInput.value?.click()
 }
 

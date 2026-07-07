@@ -11,7 +11,6 @@ const emit = defineEmits<{
   clear: []
 }>()
 
-// 导出选项
 const autoRotate = ref(true)
 const autoPlay = ref(true)
 const autoCenter = ref(true)
@@ -19,7 +18,6 @@ const orbitControl = ref(true)
 
 const isExporting = ref(false)
 const exportDone = ref(false)
-const outputPath = ref<string | null>(null)
 
 const defaultOutputName = computed(() => {
   const base = props.fileName.replace(/\.glb$/i, '')
@@ -41,36 +39,15 @@ async function handleExport() {
 
     const fileName = defaultOutputName.value
 
-    // Electron 环境：使用原生保存对话框
-    if (window.electronAPI) {
-      const savePath = await window.electronAPI.saveHtml(fileName)
-      if (!savePath) {
-        isExporting.value = false
-        return
-      }
-
-      // 通过 IPC 让主进程写文件（暂时用 download 方案）
-      const blob = new Blob([html], { type: 'text/html' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = savePath.split(/[/\\]/).pop() || fileName
-      a.click()
-      URL.revokeObjectURL(url)
-
-      outputPath.value = savePath
-    } else {
-      // 浏览器环境：直接触发下载
-      const blob = new Blob([html], { type: 'text/html' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = fileName
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      URL.revokeObjectURL(url)
-    }
+    const blob = new Blob([html], { type: 'text/html' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = fileName
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
 
     exportDone.value = true
   } catch (e: any) {
@@ -79,23 +56,10 @@ async function handleExport() {
     isExporting.value = false
   }
 }
-
-function handleOpenFolder() {
-  if (outputPath.value && window.electronAPI) {
-    window.electronAPI.showItemInFolder(outputPath.value)
-  }
-}
-
-function handleOpenPreview() {
-  if (outputPath.value && window.electronAPI) {
-    window.electronAPI.openPath(outputPath.value)
-  }
-}
 </script>
 
 <template>
   <footer class="export-bar">
-    <!-- 导出选项 -->
     <div class="options">
       <label class="option" title="自动旋转模型">
         <input type="checkbox" v-model="autoRotate" />
@@ -115,7 +79,6 @@ function handleOpenPreview() {
       </label>
     </div>
 
-    <!-- 操作按钮 -->
     <div class="actions">
       <button class="btn btn-clear" @click="emit('clear')">清除</button>
       <button
@@ -125,12 +88,6 @@ function handleOpenPreview() {
       >
         {{ isExporting ? '生成中...' : '生成 HTML' }}
       </button>
-
-      <!-- 导出成功后的快捷操作（仅 Electron 环境） -->
-      <template v-if="exportDone && window.electronAPI">
-        <button class="btn btn-outline" @click="handleOpenFolder">📂 打开目录</button>
-        <button class="btn btn-outline" @click="handleOpenPreview">🌍 打开预览</button>
-      </template>
     </div>
   </footer>
 </template>
@@ -205,15 +162,5 @@ function handleOpenPreview() {
 .btn-clear:hover {
   color: #e94560;
   border-color: #e94560;
-}
-
-.btn-outline {
-  background: transparent;
-  color: #4fc3f7;
-  border: 1px solid #4fc3f7;
-}
-
-.btn-outline:hover {
-  background: rgba(79, 195, 247, 0.1);
 }
 </style>
