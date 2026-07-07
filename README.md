@@ -20,7 +20,7 @@
 
 | 版本 | 类型 | 下载 |
 |------|------|------|
-| v0.1.0 | 便携版 | [3D-Presenter-macOS-arm64.zip](https://github.com/Mnc/3d-presentation-platform/releases) |
+| v0.1.0 | 便携版 | [3D-Presenter-macOS-arm64.zip](https://github.com/MncStudio/3d-presentation-platform/releases/download/v0.1.0/3D-Presenter-macOS-arm64.zip) |
 
 > 下载后解压，将 `3D Presenter.app` 拖入 Applications 文件夹即可。首次打开若提示"无法验证开发者"，前往 **系统设置 → 隐私与安全性 → 仍要打开**。
 
@@ -28,8 +28,8 @@
 
 | 版本 | 类型 | 下载 |
 |------|------|------|
-| v0.1.0 | 安装包 | [3D Presenter Setup 0.1.0.exe](https://github.com/Mnc/3d-presentation-platform/releases) |
-| v0.1.0 | 便携版 | [3D-Presenter-win-arm64.zip](https://github.com/Mnc/3d-presentation-platform/releases) |
+| v0.1.0 | 安装包 | [3D Presenter Setup 0.1.0.exe](https://github.com/MncStudio/3d-presentation-platform/releases/download/v0.1.0/3D.Presenter.Setup.0.1.0.exe) |
+| v0.1.0 | 便携版 | [3D-Presenter-win-arm64.zip](https://github.com/MncStudio/3d-presentation-platform/releases/download/v0.1.0/3D.Presenter-0.1.0-arm64-win.zip) |
 
 > **安装包**：双击安装，自动创建桌面快捷方式。**便携版**：解压即用，无需安装。
 >
@@ -101,7 +101,7 @@
 
 ```bash
 # 克隆项目
-git clone https://github.com/Mnc/3d-presentation-platform.git
+git clone https://github.com/MncStudio/3d-presentation-platform.git
 cd 3d-presentation-platform
 
 # 安装依赖
