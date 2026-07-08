@@ -77,7 +77,7 @@ function handleClear() {
     </div>
 
     <!-- 有模型时：预览 + 侧边压缩面板 -->
-    <template v-else>
+    <div v-else class="main-content">
       <div class="preview-section">
         <PreviewPanel
           :glb-data="glbData"
@@ -91,7 +91,7 @@ function handleClear() {
           @restore="handleRestore"
         />
       </aside>
-    </template>
+    </div>
 
     <!-- 底部导出栏 -->
     <ExportBar
@@ -107,17 +107,25 @@ function handleClear() {
 .glb-page {
   flex: 1;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   overflow: hidden;
   min-height: 0;
 }
 
 .upload-section {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 16px;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  min-height: 0;
 }
 
 .preview-section {
