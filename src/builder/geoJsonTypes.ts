@@ -87,6 +87,8 @@ export interface GeoJsonConversionOptions {
   bevelSize?: number
   /** ExtrudeGeometry 倒角分段数，默认 3（越大越圆滑） */
   bevelSegments?: number
+  /** 是否为多边形挤出体顶部绘制轮廓线，默认 true */
+  showOutlines?: boolean
 
   // ---- 管线 ----
   /** 点要素标记半径，默认 0.08 */
@@ -116,6 +118,7 @@ export const DEFAULT_CONVERSION_OPTIONS: Required<GeoJsonConversionOptions> = {
   bevelThickness: 0.02,
   bevelSize: 0.02,
   bevelSegments: 3,
+  showOutlines: true,
   pointRadius: 0.08,
   tubeRadius: 0.04,
   tubeRadialSegments: 6,

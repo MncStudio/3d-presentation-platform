@@ -256,6 +256,53 @@ function buildLineGeom(
   return results
 }
 
+/** 为多边形环生成顶部轮廓管线 */
+function buildOutlineForRings(
+  rings: Array<Array<[number, number, number?]>>,
+  height: number,
+  opts: Required<GeoJsonConversionOptions>,
+): THREE.BufferGeometry[] {
+  const results: THREE.BufferGeometry[] = []
+  const outlineRadius = opts.tubeRadius * 0.7
+  const maxSeg = 128
+
+  for (const ring of rings) {
+    if (ring.length < 2) continue
+    // 复制环到挤出体顶部高度；Z 取反以匹配 rotateX(-π/2) 后的 world Z
+    const topRing: Array<[number, number, number?]> = ring.map(
+      (c) => [c[0], height, -c[2]],
+    )
+    // 闭合环（首尾相连）
+    const first = topRing[0]
+    const last = topRing[topRing.length - 1]
+    const isClosed =
+      Math.abs(first[0] - last[0]) < 1e-8 &&
+      Math.abs((first[2] ?? 0) - (last[2] ?? 0)) < 1e-8
+    if (!isClosed) {
+      topRing.push([first[0], first[1], first[2]])
+    }
+
+    const pts = topRing.map(
+      (c) => new THREE.Vector3(c[0], c[1] + outlineRadius, c[2]),
+    )
+    const segments = Math.min(
+      topRing.length * opts.tubePathSegments,
+      maxSeg,
+    )
+    results.push(
+      new THREE.TubeGeometry(
+        new THREE.CatmullRomCurve3(pts, true),
+        segments,
+        outlineRadius,
+        Math.max(opts.tubeRadialSegments, 4),
+        true, // closed 闭合管线
+      ),
+    )
+  }
+
+  return results
+}
+
 /** Point → 定位针标记 */
 function buildPointGeom(
   coords: Array<[number, number, number?]>,
@@ -339,12 +386,18 @@ export async function geojsonToGlb(
         const rings = (feature.geometry as GeoJSONPolygon).coordinates
           .map(ring => ring.map(c => tx(c) as [number, number, number?]))
         geos.push(...buildPolygonGeom(rings, height, options))
+        if (options.showOutlines) {
+          geos.push(...buildOutlineForRings(rings, height, options))
+        }
         break
       }
       case 'MultiPolygon':
         for (const poly of (feature.geometry as GeoJSONMultiPolygon).coordinates) {
           const rings = poly.map(ring => ring.map(c => tx(c) as [number, number, number?]))
           geos.push(...buildPolygonGeom(rings, height, options))
+          if (options.showOutlines) {
+            geos.push(...buildOutlineForRings(rings, height, options))
+          }
         }
         break
     }

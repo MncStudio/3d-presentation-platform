@@ -114,6 +114,13 @@
           <div class="range-labels"><span>1（锐利）</span><span>10（圆滑）</span></div>
           <p class="hint">仅在高度 > 0.1 且倒角厚度/宽度 > 0 时生效</p>
         </div>
+        <div class="option-row">
+          <label class="toggle-row">
+            <input type="checkbox" v-model="opts.showOutlines" class="toggle-input" />
+            <span class="toggle-label">显示轮廓线</span>
+          </label>
+          <p class="hint">在多边形挤出体顶部绘制边线，方便区分相邻区域</p>
+        </div>
       </div>
 
       <!-- 管线设置 -->
@@ -333,6 +340,15 @@ function handleApply() {
 .text-input:focus { border-color: #009688; }
 
 .hint { font-size: 10px; color: #555; margin-top: 3px; }
+
+/* ---- 开关 ---- */
+.toggle-row {
+  display: flex; align-items: center; gap: 8px; cursor: pointer;
+}
+.toggle-input {
+  width: 14px; height: 14px; accent-color: #009688; cursor: pointer; margin: 0;
+}
+.toggle-label { color: #aaa; font-size: 12px; user-select: none; }
 
 /* ---- 颜色网格 ---- */
 .color-grid {
