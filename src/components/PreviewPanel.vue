@@ -159,6 +159,19 @@ function loadModel(data: ArrayBuffer) {
   loader.parse(data, '', (gltf) => {
     const model = gltf.scene
 
+    // 对有纹理的材质应用 polygonOffset，确保纹理顶面渲染在挤出体上方
+    model.traverse((child) => {
+      if ((child as THREE.Mesh).isMesh) {
+        const mat = (child as THREE.Mesh).material as THREE.MeshStandardMaterial
+        if (mat.map) {
+          mat.polygonOffset = true
+          mat.polygonOffsetFactor = -1
+          mat.polygonOffsetUnits = -1
+          mat.needsUpdate = true
+        }
+      }
+    })
+
     // 自动居中
     const box = new THREE.Box3().setFromObject(model)
     const center = box.getCenter(new THREE.Vector3())

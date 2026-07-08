@@ -70,6 +70,30 @@
         <p class="hint" style="margin-top:6px">当 properties 中无颜色字段时，按类型使用此处 fallback 色</p>
       </div>
 
+      <!-- 纹理贴图 -->
+      <div v-if="hasPolygonFeatures" class="section">
+        <h3 class="section-title">🖼️ 纹理贴图</h3>
+        <div class="option-row">
+          <label class="option-label">上传贴图 (PNG/JPEG)</label>
+          <div class="texture-row">
+            <input type="file" accept="image/png,image/jpeg"
+                   class="file-input" @change="handleTextureUpload" />
+            <span v-if="textureFileName" class="texture-name">{{ textureFileName }}</span>
+            <button v-if="textureFileName" class="btn-clear-texture"
+                    @click="clearTexture">✕</button>
+          </div>
+          <p class="hint">图片将按地理坐标映射到多边形挤出体顶面</p>
+        </div>
+        <div class="option-row">
+          <label class="option-label">
+            贴图偏移 <span class="option-value">{{ opts.textureOffset.toFixed(3) }}</span>
+          </label>
+          <input type="range" class="slider" v-model.number="textureOffsetPct" min="0" max="100" />
+          <div class="range-labels"><span>0（贴紧）</span><span>0.20（抬高）</span></div>
+          <p class="hint">调节贴图高度避免与挤出体顶面重叠</p>
+        </div>
+      </div>
+
       <!-- 材质设置 -->
       <div class="section">
         <h3 class="section-title">✨ 材质设置</h3>
@@ -221,6 +245,31 @@ watch(() => props.geojson, (gj) => {
   try { featureCount.value = countFeatures(gj) } catch { featureCount.value = { total: 0, byType: {} } }
 }, { immediate: true })
 
+const hasPolygonFeatures = computed(() => {
+  return (featureCount.value.byType['Polygon'] || 0) > 0 ||
+         (featureCount.value.byType['MultiPolygon'] || 0) > 0
+})
+
+// ---- 纹理贴图 ----
+const textureImage = ref<ArrayBuffer | null>(null)
+const textureMimeType = ref<string | null>(null)
+const textureFileName = ref<string | null>(null)
+
+async function handleTextureUpload(e: Event) {
+  const file = (e.target as HTMLInputElement).files?.[0]
+  if (!file) return
+  const buffer = await file.arrayBuffer()
+  textureImage.value = buffer
+  textureMimeType.value = file.type
+  textureFileName.value = file.name
+}
+
+function clearTexture() {
+  textureImage.value = null
+  textureMimeType.value = null
+  textureFileName.value = null
+}
+
 // ---- 本地编辑中的选项 ----
 const opts = reactive({ ...DEFAULT_CONVERSION_OPTIONS })
 
@@ -249,6 +298,7 @@ const bevelSizePct = pct(() => opts.bevelSize, (v) => { opts.bevelSize = v }, 0,
 const tubeRadialPct = pct(() => opts.tubeRadialSegments, (v) => { opts.tubeRadialSegments = Math.round(v) }, 3, 16)
 const tubePathPct = pct(() => opts.tubePathSegments, (v) => { opts.tubePathSegments = Math.round(v) }, 1, 8)
 const bevelSegPct = pct(() => opts.bevelSegments, (v) => { opts.bevelSegments = Math.round(v) }, 1, 10)
+const textureOffsetPct = pct(() => opts.textureOffset, (v) => { opts.textureOffset = v }, 0, 0.2)
 
 // 类型中文名映射
 const typeLabels: Record<string, string> = {
@@ -264,7 +314,11 @@ const typeIcons: Record<string, string> = {
 }
 
 function handleApply() {
-  emit('apply', { ...opts })
+  emit('apply', {
+    ...opts,
+    textureImage: textureImage.value ?? undefined,
+    textureMimeType: textureMimeType.value ?? undefined,
+  })
 }
 </script>
 
@@ -349,6 +403,19 @@ function handleApply() {
   width: 14px; height: 14px; accent-color: #009688; cursor: pointer; margin: 0;
 }
 .toggle-label { color: #aaa; font-size: 12px; user-select: none; }
+
+/* ---- 纹理上传 ---- */
+.texture-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.file-input { font-size: 11px; color: #aaa; max-width: 100%; }
+.file-input::file-selector-button {
+  padding: 4px 10px; border: 1px solid #333; border-radius: 4px;
+  background: rgba(0, 0, 0, 0.3); color: #ccc; cursor: pointer; font-size: 11px;
+}
+.texture-name { font-size: 10px; color: #009688; font-family: monospace; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.btn-clear-texture {
+  padding: 2px 6px; border: none; border-radius: 3px;
+  background: rgba(233, 69, 96, 0.5); color: #fff; cursor: pointer; font-size: 10px;
+}
 
 /* ---- 颜色网格 ---- */
 .color-grid {

@@ -80,6 +80,9 @@ async function handleFileSelected(file: File) {
   isLoading.value = true
   loadError.value = null
   Object.assign(conversionOpts, DEFAULT_CONVERSION_OPTIONS)
+  // 新文件清除纹理
+  conversionOpts.textureImage = undefined
+  conversionOpts.textureMimeType = undefined
 
   try {
     loadingMessage.value = '正在解析 GeoJSON...'

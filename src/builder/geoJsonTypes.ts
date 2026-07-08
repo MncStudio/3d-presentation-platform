@@ -103,6 +103,14 @@ export interface GeoJsonConversionOptions {
   // ---- 布局 ----
   /** 缩放后模型目标边界尺寸，默认 5 */
   targetSize?: number
+
+  // ---- 纹理 ----
+  /** 多边形顶面纹理图片数据（PNG/JPEG ArrayBuffer） */
+  textureImage?: ArrayBuffer
+  /** 纹理图片 MIME 类型，如 'image/png' */
+  textureMimeType?: string
+  /** 纹理顶面 Z 偏移量，用于调节贴图高度避免 z-fighting，默认 0.05 */
+  textureOffset?: number
 }
 
 export const DEFAULT_CONVERSION_OPTIONS: Required<GeoJsonConversionOptions> = {
@@ -124,4 +132,5 @@ export const DEFAULT_CONVERSION_OPTIONS: Required<GeoJsonConversionOptions> = {
   tubeRadialSegments: 6,
   tubePathSegments: 2,
   targetSize: 5,
+  textureOffset: 0.05,
 }
