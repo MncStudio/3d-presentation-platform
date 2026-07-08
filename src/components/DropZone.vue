@@ -1,5 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+
+const props = withDefaults(defineProps<{
+  acceptExtensions?: string[]
+  description?: string
+}>(), {
+  acceptExtensions: () => ['.glb', '.geojson', '.json'],
+  description: 'GLB / GeoJSON',
+})
 
 const emit = defineEmits<{
   'file-selected': [file: File]
@@ -7,6 +15,14 @@ const emit = defineEmits<{
 
 const isDragOver = ref(false)
 const fileInput = ref<HTMLInputElement>()
+
+const acceptAttr = computed(() => props.acceptExtensions.join(','))
+const acceptLabel = computed(() => props.acceptExtensions.join(' / '))
+
+function isValidFile(name: string): boolean {
+  const lower = name.toLowerCase()
+  return props.acceptExtensions.some(ext => lower.endsWith(ext))
+}
 
 function onDragOver(e: DragEvent) {
   e.preventDefault()
@@ -25,8 +41,8 @@ function onDrop(e: DragEvent) {
   const file = e.dataTransfer?.files?.[0]
   if (!file) return
 
-  if (!file.name.toLowerCase().endsWith('.glb')) {
-    alert('请拖入 .glb 格式的模型文件')
+  if (!isValidFile(file.name)) {
+    alert(`请拖入 ${acceptLabel.value} 格式的文件`)
     return
   }
 
@@ -58,7 +74,7 @@ function onFileInputChange() {
     <input
       ref="fileInput"
       type="file"
-      accept=".glb"
+      :accept="acceptAttr"
       hidden
       @change="onFileInputChange"
     />
@@ -84,7 +100,7 @@ function onFileInputChange() {
         />
       </svg>
     </div>
-    <p class="dropzone-text">拖入 GLB 文件</p>
+    <p class="dropzone-text">拖入 {{ description }} 文件</p>
     <p class="dropzone-hint">或点击选择文件</p>
   </div>
 </template>

@@ -20,7 +20,7 @@ const isExporting = ref(false)
 const exportDone = ref(false)
 
 const defaultOutputName = computed(() => {
-  const base = props.fileName.replace(/\.glb$/i, '')
+  const base = props.fileName.replace(/\.(glb|geojson|json)$/i, '')
   return `${base}-demo.html`
 })
 

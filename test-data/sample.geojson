@@ -1,0 +1,62 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "name": "主楼", "height": 1.5, "color": "#e94560" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [120.15, 30.28],
+          [120.16, 30.28],
+          [120.16, 30.27],
+          [120.15, 30.27],
+          [120.15, 30.28]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "副楼A", "height": 0.8, "color": "#4fc3f7" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [120.155, 30.275],
+          [120.158, 30.275],
+          [120.158, 30.273],
+          [120.155, 30.273],
+          [120.155, 30.275]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "道路", "color": "#ff9800" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [120.145, 30.285],
+          [120.15, 30.28],
+          [120.16, 30.28],
+          [120.165, 30.275]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "标记点1", "color": "#4caf50" },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [120.145, 30.285]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "标记点2", "color": "#ffc107" },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [120.165, 30.275]
+      }
+    }
+  ]
+}
