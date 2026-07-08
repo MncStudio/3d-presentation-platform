@@ -345,18 +345,6 @@ export async function geojsonToGlb(
     }
   }
 
-  // ---- 地面 ----
-  {
-    const groundGeo = new THREE.PlaneGeometry(options.targetSize * 2, options.targetSize * 2)
-    groundGeo.rotateX(-Math.PI / 2)
-    groundGeo.translate(0, -0.01, 0)
-    const { pos, norm, idx } = extractAndDispose(groundGeo)
-    entries.push({
-      positions: pos, normals: norm, indices: idx,
-      colorHex: 0x333333, roughness: 0.9, metalness: 0, doubleSided: true,
-    })
-  }
-
   // ---- 用 @gltf-transform 构建 GLB ----
   const doc = new Document()
   const buffer = doc.createBuffer('main')
