@@ -34,6 +34,9 @@
 - 🔍 **实时对比** — 原始 vs 压缩版本切换预览
 - 📄 **导出单文件 HTML** — 所有资源 Base64 内嵌，零依赖
 - 🧩 **Draco 支持** — 自动解码 Draco 压缩的 GLB
+- 🗺️ **GeoJSON → 3D** — 矢量地理数据一键生成挤出体 3D 模型
+- 🖼️ **纹理贴图** — 上传 PNG/JPEG 按地理坐标映射到多边形顶面
+- 🎛️ **实时参数调节** — 高度、颜色、倒角、材质全部可调
 
 ### 规划中
 - 5 套视觉模板切换（已预制：深色/白色/产品/工业/科技蓝）
@@ -104,12 +107,20 @@ npm run dev
 ```
 ├── src/
 │   ├── pages/          # 页面
+│   │   ├── HomePage.vue       # GLB 模型预览 & 压缩
+│   │   └── GeojsonPage.vue    # GeoJSON → 3D 转换
 │   ├── components/     # Vue 组件
+│   │   ├── PreviewPanel.vue   # 3D 预览渲染器
+│   │   ├── DropZone.vue       # 拖拽上传组件
+│   │   ├── GeojsonSettings.vue # GeoJSON 参数调节面板
+│   │   └── CompressSettings.vue # 压缩参数面板
 │   ├── builder/        # 构建引擎（核心）
-│   │   ├── htmlBuilder.ts   # HTML 生成
-│   │   ├── glbProcessor.ts  # 模型压缩
-│   │   ├── glbReader.ts     # GLB 解析
-│   │   └── assetEncoder.ts  # Base64 编码
+│   │   ├── htmlBuilder.ts       # HTML 生成
+│   │   ├── glbProcessor.ts      # 模型压缩
+│   │   ├── glbReader.ts         # GLB 解析
+│   │   ├── assetEncoder.ts      # Base64 编码
+│   │   ├── geoJsonProcessor.ts  # GeoJSON → GLB 转换引擎
+│   │   └── geoJsonTypes.ts      # GeoJSON 类型 & 配置定义
 │   └── template/       # HTML 模板
 ├── .github/workflows/  # CI/CD 自动部署
 ├── vite.config.ts
