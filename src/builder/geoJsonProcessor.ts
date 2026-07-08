@@ -21,11 +21,16 @@ import {
   DEFAULT_CONVERSION_OPTIONS,
 } from './geoJsonTypes'
 
-// ---- 类型色板 ----
-const TYPE_COLORS: Record<string, number> = {
-  Point: 0xffc107,         MultiPoint: 0xffc107,
-  LineString: 0x2196f3,    MultiLineString: 0x2196f3,
-  Polygon: 0x009688,       MultiPolygon: 0x009688,
+// ---- 类型色板（动态生成） ----
+function getTypeColors(opts: Required<GeoJsonConversionOptions>): Record<string, number> {
+  return {
+    Point: parseColor(opts.pointColor, 0xffc107),
+    MultiPoint: parseColor(opts.pointColor, 0xffc107),
+    LineString: parseColor(opts.lineColor, 0x2196f3),
+    MultiLineString: parseColor(opts.lineColor, 0x2196f3),
+    Polygon: parseColor(opts.polygonColor, 0x009688),
+    MultiPolygon: parseColor(opts.polygonColor, 0x009688),
+  }
 }
 
 // ---- 几何体条目（构建 GLB 的中间格式） ----
@@ -68,11 +73,11 @@ function computeBounds(features: GeoJSONFeature[]): Bounds2D {
   return { minX, maxX, minZ, maxZ }
 }
 
-function createTransformer(bounds: Bounds2D, targetSize: number): Transformer {
+function createTransformer(bounds: Bounds2D, targetSize: number, heightScale: number): Transformer {
   const cx = (bounds.minX + bounds.maxX) / 2
   const cz = (bounds.minZ + bounds.maxZ) / 2
   const scale = targetSize / Math.max(bounds.maxX - bounds.minX, bounds.maxZ - bounds.minZ)
-  return (c) => [(c[0] - cx) * scale, (c[2] ?? 0) * scale, (c[1] - cz) * scale]
+  return (c) => [(c[0] - cx) * scale, (c[2] ?? 0) * scale * heightScale, (c[1] - cz) * scale]
 }
 
 // ========== 颜色工具 ==========
@@ -189,6 +194,7 @@ function ringIsClockwise(ring: Array<[number, number, number?]>): boolean {
 function buildPolygonGeom(
   rings: Array<Array<[number, number, number?]>>,
   depth: number,
+  opts: Required<GeoJsonConversionOptions>,
 ): THREE.BufferGeometry[] {
   const results: THREE.BufferGeometry[] = []
   const shapes: Array<{ outer: THREE.Shape; holes: THREE.Path[] }> = []
@@ -211,15 +217,16 @@ function buildPolygonGeom(
     }
   }
 
+  const hasBevel = opts.bevelThickness > 0 || opts.bevelSize > 0
   for (const { outer, holes } of shapes) {
     for (const h of holes) outer.holes.push(h)
-    const bevel = Math.min(depth * 0.03, 0.02)
     try {
       const geo = new THREE.ExtrudeGeometry(outer, {
         steps: 1, depth,
-        bevelEnabled: depth > 0.1,
-        bevelThickness: bevel, bevelSize: bevel,
-        bevelSegments: depth > 0.1 ? 3 : 1,
+        bevelEnabled: depth > 0.1 && hasBevel,
+        bevelThickness: opts.bevelThickness,
+        bevelSize: opts.bevelSize,
+        bevelSegments: depth > 0.1 ? opts.bevelSegments : 1,
       })
       geo.rotateX(-Math.PI / 2)
       results.push(geo)
@@ -232,14 +239,19 @@ function buildPolygonGeom(
 function buildLineGeom(
   lines: Array<Array<[number, number, number?]>>,
   radius: number,
+  opts: Required<GeoJsonConversionOptions>,
 ): THREE.BufferGeometry[] {
   const results: THREE.BufferGeometry[] = []
+  const maxSeg = 128
   for (const line of lines) {
     if (line.length < 2) continue
     const pts = line.map((c) => new THREE.Vector3(c[0], c[1] + radius, c[2]))
     results.push(new THREE.TubeGeometry(
       new THREE.CatmullRomCurve3(pts),
-      Math.min(line.length * 2, 64), radius, 6, false))
+      Math.min(line.length * opts.tubePathSegments, maxSeg),
+      radius,
+      opts.tubeRadialSegments,
+      false))
   }
   return results
 }
@@ -274,15 +286,16 @@ export async function geojsonToGlb(
   geojson: object,
   opts?: GeoJsonConversionOptions,
 ): Promise<ArrayBuffer> {
-  const options = { ...DEFAULT_CONVERSION_OPTIONS, ...opts }
+  const options = { ...DEFAULT_CONVERSION_OPTIONS, ...opts } as Required<GeoJsonConversionOptions>
   const features = normalizeFeatures(geojson as GeoJSONRoot)
 
   if (features.length === 0) {
     throw new Error('GeoJSON 不包含任何要素 (features)')
   }
 
+  const typeColors = getTypeColors(options)
   const bounds = computeBounds(features)
-  const tx = createTransformer(bounds, options.targetSize)
+  const tx = createTransformer(bounds, options.targetSize, options.heightScale)
 
   const entries: GeomEntry[] = []
 
@@ -291,11 +304,12 @@ export async function geojsonToGlb(
     const type = feature.geometry?.type
     if (!type) continue
 
-    const fallback = TYPE_COLORS[type] ?? 0x888888
+    const fallback = typeColors[type] ?? 0x888888
     const colorHex = parseColor(
       feature.properties?.['color'] ?? feature.properties?.['fill'], fallback)
     const height = Math.max(
-      Number(feature.properties?.[options.heightProperty]) || options.defaultHeight, 0.01)
+      Number(feature.properties?.[options.heightProperty]) || options.defaultHeight, 0.01
+    ) * options.heightScale
 
     const geos: THREE.BufferGeometry[] = []
 
@@ -313,24 +327,24 @@ export async function geojsonToGlb(
       case 'LineString':
         geos.push(...buildLineGeom(
           [(feature.geometry as GeoJSONLineString).coordinates.map(c => tx(c) as [number, number, number?])],
-          options.tubeRadius))
+          options.tubeRadius, options))
         break
       case 'MultiLineString': {
         const lines = (feature.geometry as GeoJSONMultiLineString).coordinates
           .map(ring => ring.map(c => tx(c) as [number, number, number?]))
-        geos.push(...buildLineGeom(lines, options.tubeRadius))
+        geos.push(...buildLineGeom(lines, options.tubeRadius, options))
         break
       }
       case 'Polygon': {
         const rings = (feature.geometry as GeoJSONPolygon).coordinates
           .map(ring => ring.map(c => tx(c) as [number, number, number?]))
-        geos.push(...buildPolygonGeom(rings, height))
+        geos.push(...buildPolygonGeom(rings, height, options))
         break
       }
       case 'MultiPolygon':
         for (const poly of (feature.geometry as GeoJSONMultiPolygon).coordinates) {
           const rings = poly.map(ring => ring.map(c => tx(c) as [number, number, number?]))
-          geos.push(...buildPolygonGeom(rings, height))
+          geos.push(...buildPolygonGeom(rings, height, options))
         }
         break
     }
@@ -340,7 +354,10 @@ export async function geojsonToGlb(
       const { pos, norm, idx } = extractAndDispose(merged)
       entries.push({
         positions: pos, normals: norm, indices: idx,
-        colorHex, roughness: 0.6, metalness: 0.1, doubleSided: true,
+        colorHex,
+        roughness: options.roughness,
+        metalness: options.metalness,
+        doubleSided: true,
       })
     }
   }
